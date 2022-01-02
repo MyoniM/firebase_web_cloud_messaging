@@ -1,8 +1,31 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
+
+import { askForPermissionToReceiveNotifications } from "../push_message";
 
 export default function Home() {
+  // ! For push notification to work, the web page must be in background or minimized.
+  // ! so, cant send from button click
+  // ! use the below format to send from a backend or from postman
+  const handleSend = () => {
+    fetch("https://fcm.googleapis.com/fcm/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `key=${process.env.serverKey}`,
+      },
+      body: JSON.stringify({
+        notification: {
+          title: "Test Message",
+          body: "Test 1",
+          click_action: "http://localhost:3000/",
+          icon: "https://interactive-examples.mdn.mozilla.net/media/cc0-images/grapefruit-slice-332-332.jpg",
+        },
+        to: "eF1T_mQXiDwgOJYzo-SJGV:APA91bEZAFX1fsRSvxe9E_Xixh6Gt3pexgX2q7wTpGTxYmKnrHT4qDHrYi4fGW5bWeKPAOq5ODlgh2AcGBqIK1qwpYw73MzuU8kBl1y0ggPKxe61JDacJsoXe2Y7gwEOTZrJ5BrlGSA1",
+      }),
+    });
+  };
   return (
     <div className={styles.container}>
       <Head>
@@ -13,43 +36,14 @@ export default function Home() {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          <a> Firebase web cloud messaging</a>
         </h1>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+        <p className={styles.description}>Firebase version 9.6.1</p>
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <button onClick={askForPermissionToReceiveNotifications}>
+          Click to receive notification
+        </button>
       </main>
 
       <footer className={styles.footer}>
@@ -58,12 +52,12 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Powered by{' '}
+          Powered by{" "}
           <span className={styles.logo}>
             <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
           </span>
         </a>
       </footer>
     </div>
-  )
+  );
 }
